@@ -7,6 +7,13 @@ This Vagrant file will spin up an Ubuntu 16.04 box (Bento) and install and confi
 * Bro (Latest)
 * Splunk (6.6.2 - Latest at time of writing)
 
+## Setup
+1. Install a provider (Virtualbox/VMWare/etc)
+2. Install [Vagrant](https://www.vagrantup.com/)
+3. `$ git clone https://github.com/Centurion89/vagrant-ids.git`
+4. `$ cd vagrant-ids`
+5. `$ vagrant up --provider=[vmware_fusion/virtualbox/etc]`
+
 ## Suricata
 The suricata.yaml file that will be installed includes a few small changes, primarily:
 * JSON logging (eve.json) is enabled and configured fairly verbosely
