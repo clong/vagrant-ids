@@ -103,13 +103,12 @@ echo '[monitor:///var/log/suricata/eve.json]
 index=suricata
 sourcetype=suricata:json
 
-[monitor:///var/log/suricata/*.log]
-index=suricata
-sourcetype=suricata:syslog
-
 [monitor:///opt/bro/logs/current/*.log]
 index=bro
 sourcetype=bro:json' >> /opt/splunk/etc/system/local/inputs.conf
+echo '[bro:json]
+INDEXED_EXTRACTIONS=json
+TIME_PREFIX=\"ts\"\:' > /opt/splunk/etc/system/local/props.conf
 # Skip Splunk Tour and Change Password Dialog
 touch /opt/splunk/etc/.ui_login
 # Reboot Splunk to make changes take effect
