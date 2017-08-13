@@ -91,3 +91,27 @@ interface=$DEFAULTIF" > /opt/bro/etc/node.cfg
 echo -e 'redef LogAscii::use_json = T;' >> /opt/bro/share/bro/base/frameworks/logging/writers/ascii.bro
 # Start BroIDS
 /opt/bro/bin/broctl deploy
+
+## Download and install Splunk
+cd /vagrant
+wget --progress=bar:force -O splunk-6.6.2-4b804538c686-linux-2.6-amd64.deb 'https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.6.2&product=splunk&filename=splunk-6.6.2-4b804538c686-linux-2.6-amd64.deb&wget=true'
+dpkg -i splunk-6.6.2-4b804538c686-linux-2.6-amd64.deb
+/opt/splunk/bin/splunk start --accept-license
+/opt/splunk/bin/splunk add index suricata -auth 'admin:changeme'
+/opt/splunk/bin/splunk add index bro -auth 'admin:changeme'
+echo '[monitor:///var/log/suricata/eve.json]
+index=suricata
+sourcetype=suricata:json
+
+[monitor:///var/log/suricata/*.log]
+index=suricata
+sourcetype=suricata:syslog
+
+[monitor:///opt/bro/logs/current/*.log]
+index=bro
+sourcetype=bro:json' >> /opt/splunk/etc/system/local/inputs.conf
+# Skip Splunk Tour and Change Password Dialog
+touch /opt/splunk/etc/.ui_login
+# Reboot Splunk to make changes take effect
+/opt/splunk/bin/splunk restart
+/opt/splunk/bin/splunk enable boot-start
