@@ -43,14 +43,17 @@ perl -MCPAN -e 'install Crypt::SSLeay'
 # Run pulledpork and load the rules into /etc/suricata/rules
 ./pulledpork.pl -c etc/pulledpork.conf -S suricata-3.0
 
+# Determine name of default network interface
 DEFAULTIF=$(ifconfig | grep ^[a-z] | grep -v lo | cut -d ' ' -f 1)
-suricata -D -c /etc/suricata/suricata.yaml -i $DEFAULTIF -v
-sleep 5
 # Start suricata
 # -D Daemon mode
 # -c path to suricata.yaml
 # -i interface
 # -v verbose
+suricata -D -c /etc/suricata/suricata.yaml -i $DEFAULTIF -v
+
+# Give Suricata a few seconds to initialize and run tests
+sleep 5
 echo -e "Running tests...\n"
 curl -A "BlackSun" example.com
 sleep 3;
@@ -101,6 +104,7 @@ dpkg -i splunk-6.6.2-4b804538c686-linux-2.6-amd64.deb
 /opt/splunk/bin/splunk start --accept-license
 /opt/splunk/bin/splunk add index suricata -auth 'admin:changeme'
 /opt/splunk/bin/splunk add index bro -auth 'admin:changeme'
+# Configure Splunk inputs
 echo '[monitor:///var/log/suricata/eve.json]
 index=suricata
 sourcetype=suricata:json
@@ -108,6 +112,7 @@ sourcetype=suricata:json
 [monitor:///opt/bro/logs/current/*.log]
 index=bro
 sourcetype=bro:json' >> /opt/splunk/etc/system/local/inputs.conf
+# Fix broken extrations for some Bro log files
 echo '[bro:json]
 INDEXED_EXTRACTIONS=json
 TIME_PREFIX=\"ts\"\:' > /opt/splunk/etc/system/local/props.conf
