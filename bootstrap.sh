@@ -119,7 +119,8 @@ TIME_PREFIX=\"ts\"\:' > /opt/splunk/etc/system/local/props.conf
 # Skip Splunk Tour and Change Password Dialog
 touch /opt/splunk/etc/.ui_login
 # Enable SSL login
-sed -i 's/enableSplunkWebSSL = false/enableSplunkWebSSL = true/g' /opt/splunk/etc/system/default/web.conf
+cp /opt/splunk/etc/system/default/web.conf /opt/splunk/etc/system/local/web.conf
+sed -i 's/enableSplunkWebSSL = false/enableSplunkWebSSL = true/g' /opt/splunk/etc/system/local/web.conf
 # Reboot Splunk to make changes take effect
 /opt/splunk/bin/splunk restart
 /opt/splunk/bin/splunk enable boot-start
